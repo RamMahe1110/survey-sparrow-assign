@@ -1,0 +1,399 @@
+// MEDIA QUERY MANAGER
+/*
+0 - 600px:      Phone
+600 - 900px:    Tablet portrait
+900 - 1200px:   Tablet landscape
+[1200 - 1800] is where our normal styles apply
+1800px + :      Big desktop
+$breakpoint arguement choices:
+- phone
+- tab-port
+- tab-land
+- big-desktop
+
+Inside media queries 1em is always 16px i.e 1em = 16px at every screen size only inside media queries
+*/
+
+@mixin respond($breakpoint) {
+  @if $breakpoint == phone {
+    @media only screen and (max-width: 37.5em) {
+      @content;
+    } //600px
+  }
+  @if $breakpoint == tab-port {
+    @media only screen and (max-width: 56.25em) {
+      @content;
+    } //900px
+  }
+  @if $breakpoint == tab-land {
+    @media only screen and (max-width: 75em) {
+      @content;
+    } //1200px
+  }
+  @if $breakpoint == big-desktop {
+    @media only screen and (min-width: 112.5em) {
+      @content;
+    } //1800
+  }
+}
+
+html {
+  // This defines what 1rem is
+  font-size: 62.5%; //1 rem = 10px; 10px/16px = 62.5%
+  scroll-behavior: smooth;
+
+  @include respond(tab-land) {
+    // width < 1200?
+    font-size: 59%; //1 rem =
+  }
+
+  @include respond(tab-port) {
+    // width < 900?
+    font-size: 56%; //1 rem =
+  }
+
+  @include respond(big-desktop) {
+    font-size: 65%; //1rem =
+  }
+}
+
+/* Hero Section Stylings */
+
+.header {
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  background: transparent;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5rem 6rem;
+
+    @include respond(tab-port) {
+      padding: 0 2rem;
+    }
+  }
+
+  &__logo-container {
+    width: 12rem;
+  }
+  &__logo-text {
+    font-size: 3.5rem;
+    font-weight: 700;
+  }
+  &__links {
+    display: flex;
+    @include respond(phone) {
+      display: none;
+    }
+  }
+  &__link {
+    padding: 1rem 3rem;
+    display: inline-block;
+    font-size: 1.7rem;
+    color: #eee;
+    letter-spacing: 1px;
+    font-weight: 500;
+    &--hl {
+      padding: 1rem 4.5rem;
+      font-weight: 600;
+      color: #000;
+      background: #fff;
+      border-radius: 50px;
+    }
+  }
+
+  &__main-ham-menu-cont {
+    display: none;
+    width: 3rem;
+
+    padding: 2.5rem 0;
+
+    @include respond(phone) {
+      display: block;
+    }
+  }
+  &__main-ham-menu {
+    width: 100%;
+  }
+
+  &__sm-menu {
+    background: #000;
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    display: none;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+    &--active {
+      display: none;
+      @include respond(phone) {
+        display: block;
+      }
+    }
+  }
+  &__sm-menu-link {
+    padding: 2.5rem 3rem;
+    font-size: 1.6rem;
+    color: #eee;
+    text-align: right;
+    border-bottom: 1px solid #222;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    &:last-child {
+      border: none;
+    }
+  }
+  &__sm-menu-link-last {
+    border-bottom: 0;
+  }
+}
+
+.hero {
+  color: #fff;
+  background: linear-gradient(to right, rgba(#000, 0), rgba(#000, 0)),
+    url('./assets/Banner.png');
+  background-size: cover;
+  background-position: top;
+
+  min-height: 100vh;
+  position: relative;
+
+  &__content {
+    height: 100vh;
+    max-width: 120rem;
+    width: 95%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+  }
+  &__heading-primary {
+    font-size: 8rem;
+    font-weight: 700;
+    line-height: 1.1;
+    &-text {
+      display: block;
+    }
+  }
+}
+
+.chat-element {
+  position: fixed;
+  right: 5rem;
+  bottom: 5rem;
+  z-index: 5;
+  border-bottom-left-radius: 50px;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    z-index: -1;
+    width: 3.5rem;
+    height: 3.5rem;
+    position: absolute;
+    bottom: 0;
+    left: 3.5rem;
+    background: #fff;
+    border-bottom-right-radius: 3px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+
+  &__icon-cont {
+    background-color: #fff;
+    width: 7rem;
+    height: 7rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__icon {
+    width: 2.5rem;
+  }
+}
+
+.chat-container {
+  background: #fff;
+  width: 90%;
+  max-width: 40rem;
+  position: fixed;
+  right: 5rem;
+  bottom: 14rem;
+  border-radius: 5px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+  &__greetings {
+    margin: 1.5rem;
+    background: #7f8ac5;
+    border-radius: 5px;
+    padding: 2rem 4rem;
+    &-title {
+      font-size: 2.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    &-msg {
+      font-size: 1.3rem;
+      font-weight: 500;
+    }
+  }
+
+  &__start {
+    display: none;
+    padding: 2rem 6rem 4rem 6rem;
+    &-title {
+      font-size: 1.6rem;
+      color: #0c003a;
+      margin-bottom: 0.8rem;
+    }
+    &-msg {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 1.7rem;
+      font-weight: 500;
+    }
+    &-btn {
+      background: #13a884;
+      display: flex;
+      align-items: center;
+      border-radius: 50px;
+      padding: 1.2rem 2rem;
+      cursor: pointer;
+      &-text {
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.4rem;
+        margin-right: 7px;
+      }
+      &-icon {
+        font-size: 2rem;
+        color: #fff;
+      }
+    }
+  }
+
+  &__convo {
+    &-main {
+      height: 30rem;
+      padding: 1.5rem 1.5rem 3rem 1.5rem;
+      overflow-y: scroll;
+
+      &::-webkit-scrollbar {
+        width: 0; /* Remove scrollbar space */
+        background: transparent; /* Optional: just make scrollbar invisible */
+      }
+      /* Optional: show position indicator in red */
+      &::-webkit-scrollbar-thumb {
+        background: #ff0000;
+      }
+
+      &-msg-cont {
+        margin-bottom: 2.5rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+      &-msg {
+        color: #fff;
+        max-width: 65%;
+        width: fit-content;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        &-text {
+          background: #4c5aa1;
+          font-size: 1.2rem;
+          padding: 1.2rem 2rem;
+          font-weight: 500;
+          border-radius: 5px;
+          border-bottom-right-radius: 0;
+          // word-break: break-all;
+          word-break: break-all;
+          position: relative;
+
+          &::after {
+            content: '';
+            display: block;
+            clip-path: polygon(0 0, 100% 100%, 100% 0);
+            width: 1.5rem;
+            height: 1.5rem;
+            background: #4c5aa1;
+            border-bottom-right-radius: 5px;
+            position: absolute;
+            top: 99%;
+            right: 0;
+          }
+
+          &--support {
+            border-bottom-right-radius: 5px;
+            border-bottom-left-radius: 0;
+            color: #0c003a;
+            background: #ecf1fb;
+            width: calc(100% - 4rem);
+            width: fit-content;
+            color: #444;
+
+            &::after {
+              content: '';
+
+              clip-path: polygon(0 0, 0 100%, 100% 0);
+              background: #ecf1fb;
+              border-bottom-left-radius: 5px;
+
+              left: 0;
+            }
+          }
+        }
+        &-support-img-cont {
+          width: 3rem;
+          height: 3rem;
+          margin-right: 1rem;
+          border-radius: 50px;
+          background: #000;
+          overflow: hidden;
+        }
+        &-support-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        &--user {
+          margin-left: auto;
+        }
+        &--support {
+          margin: 0;
+        }
+      }
+    }
+    &-form {
+      display: flex;
+      &-input {
+        padding: 2.5rem 4rem;
+        border: none;
+        border-top: 1px solid rgb(210, 210, 210);
+        width: 80%;
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #333;
+      }
+      &-submit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20%;
+        border-top: 1px solid rgb(210, 210, 210);
+        &-icon {
+          font-size: 2.5rem;
+          color: #7f8ac5;
+        }
+      }
+    }
+  }
+}
