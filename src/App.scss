@@ -216,6 +216,10 @@ html {
   &__icon {
     width: 2.5rem;
   }
+  &__close-icon {
+    color: #555;
+    font-size: 3rem;
+  }
 }
 
 .chat-container {
@@ -245,7 +249,6 @@ html {
   }
 
   &__start {
-    display: none;
     padding: 2rem 6rem 4rem 6rem;
     &-title {
       font-size: 1.6rem;
@@ -301,6 +304,7 @@ html {
         }
       }
       &-msg {
+        animation: grow 0.5s;
         color: #fff;
         max-width: 65%;
         width: fit-content;
@@ -314,9 +318,8 @@ html {
           font-weight: 500;
           border-radius: 5px;
           border-bottom-right-radius: 0;
-          // word-break: break-all;
-          word-break: break-all;
           position: relative;
+          word-break: break-all;
 
           &::after {
             content: '';
@@ -334,11 +337,9 @@ html {
           &--support {
             border-bottom-right-radius: 5px;
             border-bottom-left-radius: 0;
-            color: #0c003a;
             background: #ecf1fb;
-            width: calc(100% - 4rem);
-            width: fit-content;
             color: #444;
+            width: calc(100% - 4rem);
 
             &::after {
               content: '';
@@ -375,7 +376,7 @@ html {
     &-form {
       display: flex;
       &-input {
-        padding: 2.5rem 4rem;
+        padding: 2.5rem 2rem 2.5rem 4rem;
         border: none;
         border-top: 1px solid rgb(210, 210, 210);
         width: 80%;
@@ -384,6 +385,7 @@ html {
         color: #333;
       }
       &-submit {
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -395,5 +397,15 @@ html {
         }
       }
     }
+  }
+}
+
+@keyframes grow {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }

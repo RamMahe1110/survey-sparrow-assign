@@ -1,16 +1,20 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import Loader from 'react-loader-spinner'
 
 class Hero extends React.Component {
   state = {
+    chatActivated: false,
     messageInput: '',
     allMessages: [
       {
         type: 'support',
         msg: 'Hello, How can I help you? Let me know.',
-      }
+      },
     ],
+    supportLoader: false,
+    chatPopup: false,
   }
 
   scrollToBottomOfChat = () => {
@@ -21,18 +25,48 @@ class Hero extends React.Component {
   }
 
   getSupportMessage = () => {
-    axios.get('https://api.adviceslip.com/advice').then((res) => {
-      const allMessages = this.state.allMessages
+    const allMessages = this.state.allMessages
 
-      allMessages.push({
-        type: 'support',
-        msg: res.data.slip.advice,
-      })
-      this.setState({
-          allMessages
-      })
-      this.scrollToBottomOfChat()
+    allMessages.push({
+      type: 'support',
+      msg: null,
     })
+
+    this.setState(
+      {
+        supportLoader: true,
+        allMessages,
+      },
+      () => {
+        this.scrollToBottomOfChat()
+      }
+    )
+
+    axios
+      .get('https://api.adviceslip.com/advice')
+      .then((res) => {
+        allMessages.pop()
+
+        allMessages.push({
+          type: 'support',
+          msg: res.data.slip.advice,
+        })
+
+        this.setState(
+          {
+            allMessages,
+            supportLoader: false,
+          },
+          () => {
+            this.scrollToBottomOfChat()
+          }
+        )
+      })
+      .catch((err) => {
+        this.setState({
+          supportLoader: false,
+        })
+      })
   }
 
   onFormSubmit = (e) => {
@@ -45,15 +79,30 @@ class Hero extends React.Component {
         type: 'user',
         msg: this.state.messageInput,
       })
-      this.scrollToBottomOfChat()
+
+      this.setState(
+        {
+          allMessages,
+          messageInput: '',
+        },
+        () => {
+          this.getSupportMessage()
+          this.scrollToBottomOfChat()
+        }
+      )
     }
+  }
 
-    this.getSupportMessage()
+  chatActivation = () => {
+    this.setState({ chatActivated: true })
+  }
 
-    this.setState({
-      allMessages,
-      messageInput: '',
-    })
+  onChatToggle = () => {
+    if (this.state.chatPopup) {
+      this.setState({ chatPopup: false })
+    } else {
+      this.setState({ chatPopup: true })
+    }
   }
 
   render() {
@@ -125,107 +174,129 @@ class Hero extends React.Component {
               <span className="hero__heading-primary-text">speaks.</span>
             </h1>
           </div>
-          <div className="chat-element">
+          <div onClick={this.onChatToggle} className="chat-element">
             <div className="chat-element__icon-cont">
-              <img
-                src={require('../assets/Sparrow Bird.png').default}
-                alt="Icon"
-                className="chat-element__icon"
-              />
+              {this.state.chatPopup ? (
+                <span class="material-icons chat-element__close-icon">
+                  close
+                </span>
+              ) : (
+                <img
+                  src={require('../assets/Sparrow Bird.png').default}
+                  alt="Icon"
+                  className="chat-element__icon"
+                />
+              )}
             </div>
           </div>
-          <div className="chat-container">
-            <div className="chat-container__content">
-              <div className="chat-container__greetings">
-                <h3 className="chat-container__greetings-title">Hi There</h3>
-                <p className="chat-container__greetings-msg">
-                  The team typically replies in a few minutes
-                </p>
-              </div>
-            </div>
-            <div className="chat-container__main">
-              <div className="chat-container__start">
-                <h3 className="chat-container__start-title">
-                  Start a Conversation
-                </h3>
-                <p className="chat-container__start-msg">
-                  The team typically replies in a few minutes
-                </p>
-                <button className="chat-container__start-btn">
-                  <span className="chat-container__start-btn-text">
-                    New Conversation
-                  </span>
-
-                  <span className="material-icons chat-container__start-btn-icon">
-                    send
-                  </span>
-                </button>
-              </div>
-              <div className="chat-container__convo">
-                <div className="chat-container__convo-main">
-                  {this.state.allMessages.map((msgItem, idx) => {
-                    if (msgItem.type === 'user') {
-                      return (
-                        <div
-                          key={idx}
-                          className="chat-container__convo-main-msg-cont"
-                        >
-                          <div className="chat-container__convo-main-msg chat-container__convo-main-msg--user">
-                            <div className="chat-container__convo-main-msg-text">
-                              {msgItem.msg}
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    } else {
-                      return (
-                        <div
-                          key={idx}
-                          className="chat-container__convo-main-msg-cont"
-                        >
-                          <div className="chat-container__convo-main-msg chat-container__convo-main-msg--support">
-                            <div className="chat-container__convo-main-msg-support-img-cont">
-                              <img
-                                src="https://d33wubrfki0l68.cloudfront.net/f4f396d63bd5e4abc40e7473d10f6537ca7effce/2db05/assets/client-4.jpg"
-                                alt="Support"
-                                className="chat-container__convo-main-msg-support-img"
-                              />
-                            </div>
-                            <div className="chat-container__convo-main-msg-text chat-container__convo-main-msg-text--support">
-                              {msgItem.msg}
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    }
-                  })}
+          {this.state.chatPopup ? (
+            <div className="chat-container">
+              <div className="chat-container__content">
+                <div className="chat-container__greetings">
+                  <h3 className="chat-container__greetings-title">Hi There</h3>
+                  <p className="chat-container__greetings-msg">
+                    The team typically replies in a few minutes
+                  </p>
                 </div>
-                <div className="chat-container__convo-branding"></div>
-                <form
-                  onSubmit={this.onFormSubmit}
-                  className="chat-container__convo-form"
-                >
-                  <input
-                    placeholder="Write a reply..."
-                    type="text"
-                    className="chat-container__convo-form-input"
-                    value={this.state.messageInput}
-                    onChange={(e) => {
-                      console.log(e.target.value)
-                      this.setState({
-                        messageInput: e.target.value,
-                      })
-                    }}
-                  />
-                  <div className="chat-container__convo-form-submit">
-                    <span className="material-icons chat-container__convo-form-submit-icon">
-                      send
-                    </span>
+              </div>
+              <div className="chat-container__main">
+                {!this.state.chatActivated ? (
+                  <div className="chat-container__start">
+                    <h3 className="chat-container__start-title">
+                      Start a Conversation
+                    </h3>
+                    <p className="chat-container__start-msg">
+                      The team typically replies in a few minutes
+                    </p>
+                    <button
+                      onClick={this.chatActivation}
+                      className="chat-container__start-btn"
+                    >
+                      <span className="chat-container__start-btn-text">
+                        New Conversation
+                      </span>
+
+                      <span className="material-icons chat-container__start-btn-icon">
+                        send
+                      </span>
+                    </button>
                   </div>
-                </form>
+                ) : (
+                  <div className="chat-container__convo">
+                    <div className="chat-container__convo-main">
+                      {this.state.allMessages.map((msgItem, idx) => {
+                        if (msgItem.type === 'user') {
+                          return (
+                            <div
+                              key={idx}
+                              className="chat-container__convo-main-msg-cont"
+                            >
+                              <div className="chat-container__convo-main-msg chat-container__convo-main-msg--user">
+                                <div className="chat-container__convo-main-msg-text">
+                                  {msgItem.msg}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        } else {
+                          return (
+                            <div
+                              key={idx}
+                              className="chat-container__convo-main-msg-cont"
+                            >
+                              <div className="chat-container__convo-main-msg chat-container__convo-main-msg--support">
+                                <div className="chat-container__convo-main-msg-support-img-cont">
+                                  <img
+                                    src="https://d33wubrfki0l68.cloudfront.net/f4f396d63bd5e4abc40e7473d10f6537ca7effce/2db05/assets/client-4.jpg"
+                                    alt="Support"
+                                    className="chat-container__convo-main-msg-support-img"
+                                  />
+                                </div>
+                                {msgItem.msg === null ? (
+                                  <Loader
+                                    type="ThreeDots"
+                                    color="#AFBAC9"
+                                    height={25}
+                                    width={25}
+                                  />
+                                ) : (
+                                  <div className="chat-container__convo-main-msg-text chat-container__convo-main-msg-text--support">
+                                    {msgItem.msg}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        }
+                      })}
+                    </div>
+                    <div className="chat-container__convo-branding"></div>
+                    <form
+                      onSubmit={this.onFormSubmit}
+                      className="chat-container__convo-form"
+                    >
+                      <input
+                        placeholder="Write a reply..."
+                        type="text"
+                        className="chat-container__convo-form-input"
+                        value={this.state.messageInput}
+                        onChange={(e) => {
+                          this.setState({
+                            messageInput: e.target.value,
+                          })
+                        }}
+                      />
+                      <div onClick={this.onFormSubmit} className="chat-container__convo-form-submit">
+                        <span className="material-icons chat-container__convo-form-submit-icon">
+                          send
+                        </span>
+                      </div>
+                    </form>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          ) : null}
         </section>
       </section>
     )
