@@ -1,18 +1,13 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import axios from 'axios'
 import Loader from 'react-loader-spinner'
+import Header from './Header';
 
 class Hero extends React.Component {
   state = {
     chatActivated: false,
     messageInput: '',
-    allMessages: [
-      {
-        type: 'support',
-        msg: 'Hello, How can I help you? Let me know.',
-      },
-    ],
+    allMessages: [],
     supportLoader: false,
     chatPopup: false,
   }
@@ -94,76 +89,27 @@ class Hero extends React.Component {
   }
 
   chatActivation = () => {
-    this.setState({ chatActivated: true })
+    this.setState({ chatActivated: true }, () => {
+      this.getSupportMessage()
+    })
   }
 
   onChatToggle = () => {
     if (this.state.chatPopup) {
       this.setState({ chatPopup: false })
     } else {
-      this.setState({ chatPopup: true })
+      this.setState({ chatPopup: true }, () => {
+        if (this.state.chatActivated) {
+          this.scrollToBottomOfChat()
+        }
+      })
     }
   }
 
   render() {
     return (
       <section className="hero">
-        <header className="header">
-          <div className="header__content">
-            <div className="header__logo-container">
-              <span className="header__logo-text">Maxeon</span>
-            </div>
-            <div className="header__main">
-              <ul className="header__links">
-                <li className="header__link-wrapper">
-                  <Link to="/" className="header__link">
-                    Products
-                  </Link>
-                </li>
-                <li className="header__link-wrapper">
-                  <Link to="/" className="header__link">
-                    Features
-                  </Link>
-                </li>
-                <li className="header__link-wrapper">
-                  <Link to="/" className="header__link">
-                    Use Cases
-                  </Link>
-                </li>
-                <li className="header__link-wrapper">
-                  <Link to="/" className="header__link">
-                    Pricing
-                  </Link>
-                </li>
-                <li className="header__link-wrapper">
-                  <Link to="/" className="header__link header__link--hl">
-                    Login
-                  </Link>
-                </li>
-              </ul>
-              {/* <div className="header__main-ham-menu-cont">
-                <img
-                  src="./assets/menu.svg"
-                  alt="hamburger menu"
-                  className="header__main-ham-menu"
-                />
-              </div> */}
-            </div>
-          </div>
-          {/* <div className="header__sm-menu">
-            <div className="header__sm-menu-content">
-              <ul className="header__sm-menu-links">
-                <li className="header__sm-menu-link">Home</li>
-
-                <li className="header__sm-menu-link">About</li>
-
-                <li className="header__sm-menu-link">Projects</li>
-
-                <li className="header__sm-menu-link">Blog</li>
-              </ul>
-            </div>
-          </div> */}
-        </header>
+        <Header />
         <section className="hero">
           <div className="hero__content">
             <h1 className="hero__heading-primary">
@@ -177,7 +123,7 @@ class Hero extends React.Component {
           <div onClick={this.onChatToggle} className="chat-element">
             <div className="chat-element__icon-cont">
               {this.state.chatPopup ? (
-                <span class="material-icons chat-element__close-icon">
+                <span className="material-icons chat-element__close-icon">
                   close
                 </span>
               ) : (
@@ -195,7 +141,9 @@ class Hero extends React.Component {
                 <div className="chat-container__greetings">
                   <h3 className="chat-container__greetings-title">Hi There</h3>
                   <p className="chat-container__greetings-msg">
-                    The team typically replies in a few minutes
+                    {this.state.chatActivated
+                      ? 'The team typically replies in a few minutes'
+                      : 'Hello, Ask us anything. Share your feedback to us.'}
                   </p>
                 </div>
               </div>
@@ -254,6 +202,7 @@ class Hero extends React.Component {
                                 </div>
                                 {msgItem.msg === null ? (
                                   <Loader
+                                    className="dotsLoader"
                                     type="ThreeDots"
                                     color="#AFBAC9"
                                     height={25}
@@ -270,7 +219,18 @@ class Hero extends React.Component {
                         }
                       })}
                     </div>
-                    <div className="chat-container__convo-branding"></div>
+                    <div className="chat-container__convo-branding">
+                      <div className="chat-container__convo-branding-img-cont">
+                        <img
+                          src={require('../assets/sparrow favicon.png').default}
+                          alt="survey sparrow logo"
+                          className="chat-container__convo-branding-img"
+                        />
+                      </div>
+                      <span className="chat-container__convo-branding-text">
+                        we run on surveysparrow
+                      </span>
+                    </div>
                     <form
                       onSubmit={this.onFormSubmit}
                       className="chat-container__convo-form"
@@ -286,7 +246,10 @@ class Hero extends React.Component {
                           })
                         }}
                       />
-                      <div onClick={this.onFormSubmit} className="chat-container__convo-form-submit">
+                      <div
+                        onClick={this.onFormSubmit}
+                        className="chat-container__convo-form-submit"
+                      >
                         <span className="material-icons chat-container__convo-form-submit-icon">
                           send
                         </span>
