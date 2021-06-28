@@ -1,3 +1,3 @@
 Solution Demo:
 
-![Survey Sparrow Assignment Demo]('https://github.com/RamMahe1110/survey-sparrow-assign/tree/main/src/assets/solution-demo.gif')
+![Survey Sparrow Assignment Demo]('demo/solution-demo.gif')
