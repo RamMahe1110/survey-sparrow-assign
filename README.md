@@ -1,3 +1,3 @@
-Solution Demo:
+# Solution Demo:
 
-![Survey Sparrow Assignment Demo]('demo/solution-demo.gif')
+![Shopping Cart Demo](demo/solution-demo.gif)
